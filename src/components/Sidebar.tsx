@@ -6,10 +6,10 @@ interface FilterOption {
 }
 
 const Sidebar = () => {
-  const [selectedDomain, setSelectedDomain] = useState('All');
-  const [selectedFocus, setSelectedFocus] = useState('All');
-  const [selectedLevel, setSelectedLevel] = useState('All');
-  const [selectedDex, setSelectedDex] = useState('All');
+  const [selectedDomain, setSelectedDomain] = useState<string[]>(['all']);
+  const [selectedFocus, setSelectedFocus] = useState<string[]>(['all']);
+  const [selectedLevel, setSelectedLevel] = useState<string[]>(['all']);
+  const [selectedDex, setSelectedDex] = useState<string[]>(['all']);
 
   const domainOptions: FilterOption[] = [
     { id: 'all', label: 'All' },
@@ -40,6 +40,64 @@ const Sidebar = () => {
     { id: 'emerging', label: 'Emerging' }
   ];
 
+  const handleFilterChange = (filterType: string, optionId: string, isChecked: boolean) => {
+    if (optionId === 'all') {
+      if (isChecked) {
+        // Если выбрали "All", убираем все остальные
+        switch (filterType) {
+          case 'domain':
+            setSelectedDomain(['all']);
+            break;
+          case 'focus':
+            setSelectedFocus(['all']);
+            break;
+          case 'level':
+            setSelectedLevel(['all']);
+            break;
+          case 'dex':
+            setSelectedDex(['all']);
+            break;
+        }
+      }
+    } else {
+      // Если выбрали конкретный фильтр
+      switch (filterType) {
+        case 'domain':
+          if (isChecked) {
+            setSelectedDomain(prev => [...prev.filter(id => id !== 'all'), optionId]);
+          } else {
+            const newSelection = selectedDomain.filter(id => id !== optionId);
+            setSelectedDomain(newSelection.length > 0 ? newSelection : ['all']);
+          }
+          break;
+        case 'focus':
+          if (isChecked) {
+            setSelectedFocus(prev => [...prev.filter(id => id !== 'all'), optionId]);
+          } else {
+            const newSelection = selectedFocus.filter(id => id !== optionId);
+            setSelectedFocus(newSelection.length > 0 ? newSelection : ['all']);
+          }
+          break;
+        case 'level':
+          if (isChecked) {
+            setSelectedLevel(prev => [...prev.filter(id => id !== 'all'), optionId]);
+          } else {
+            const newSelection = selectedLevel.filter(id => id !== optionId);
+            setSelectedLevel(newSelection.length > 0 ? newSelection : ['all']);
+          }
+          break;
+        case 'dex':
+          if (isChecked) {
+            setSelectedDex(prev => [...prev.filter(id => id !== 'all'), optionId]);
+          } else {
+            const newSelection = selectedDex.filter(id => id !== optionId);
+            setSelectedDex(newSelection.length > 0 ? newSelection : ['all']);
+          }
+          break;
+      }
+    }
+  };
+
   return (
     <aside className="w-72 border-r border-border p-6 font-mono">
       <div className="space-y-6">
@@ -47,16 +105,22 @@ const Sidebar = () => {
           <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">DOMAIN</h3>
           <div className="space-y-1">
             {domainOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-3 cursor-pointer group">
+              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="domain"
                   value={option.id}
-                  checked={selectedDomain === option.label}
-                  onChange={() => setSelectedDomain(option.label)}
-                  className="w-3 h-3 text-primary bg-background border border-border rounded-full focus:ring-0 focus:ring-offset-0"
+                  checked={selectedDomain.includes(option.id)}
+                  onChange={(e) => handleFilterChange('domain', option.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
+                    option.id === 'all' ? 'rounded-full' : 'rounded'
+                  }`}
                 />
-                <span className="text-xs text-foreground group-hover:text-primary transition-colors">
+                <span className={`text-xs transition-colors ${
+                  option.id === 'all' 
+                    ? 'font-semibold text-primary' 
+                    : 'text-foreground group-hover:text-primary'
+                }`}>
                   {option.label}
                 </span>
               </label>
@@ -68,16 +132,22 @@ const Sidebar = () => {
           <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">FOCUS</h3>
           <div className="space-y-1">
             {focusOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-3 cursor-pointer group">
+              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="focus"
                   value={option.id}
-                  checked={selectedFocus === option.label}
-                  onChange={() => setSelectedFocus(option.label)}
-                  className="w-3 h-3 text-primary bg-background border border-border rounded-full focus:ring-0 focus:ring-offset-0"
+                  checked={selectedFocus.includes(option.id)}
+                  onChange={(e) => handleFilterChange('focus', option.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
+                    option.id === 'all' ? 'rounded-full' : 'rounded'
+                  }`}
                 />
-                <span className="text-xs text-foreground group-hover:text-primary transition-colors">
+                <span className={`text-xs transition-colors ${
+                  option.id === 'all' 
+                    ? 'font-semibold text-primary' 
+                    : 'text-foreground group-hover:text-primary'
+                }`}>
                   {option.label}
                 </span>
               </label>
@@ -89,16 +159,22 @@ const Sidebar = () => {
           <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">LEVEL</h3>
           <div className="space-y-1">
             {levelOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-3 cursor-pointer group">
+              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="level"
                   value={option.id}
-                  checked={selectedLevel === option.label}
-                  onChange={() => setSelectedLevel(option.label)}
-                  className="w-3 h-3 text-primary bg-background border border-border rounded-full focus:ring-0 focus:ring-offset-0"
+                  checked={selectedLevel.includes(option.id)}
+                  onChange={(e) => handleFilterChange('level', option.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
+                    option.id === 'all' ? 'rounded-full' : 'rounded'
+                  }`}
                 />
-                <span className="text-xs text-foreground group-hover:text-primary transition-colors">
+                <span className={`text-xs transition-colors ${
+                  option.id === 'all' 
+                    ? 'font-semibold text-primary' 
+                    : 'text-foreground group-hover:text-primary'
+                }`}>
                   {option.label}
                 </span>
               </label>
@@ -110,16 +186,22 @@ const Sidebar = () => {
           <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">DEX</h3>
           <div className="space-y-1">
             {dexOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-3 cursor-pointer group">
+              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="dex"
                   value={option.id}
-                  checked={selectedDex === option.label}
-                  onChange={() => setSelectedDex(option.label)}
-                  className="w-3 h-3 text-primary bg-background border border-border rounded-full focus:ring-0 focus:ring-offset-0"
+                  checked={selectedDex.includes(option.id)}
+                  onChange={(e) => handleFilterChange('dex', option.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
+                    option.id === 'all' ? 'rounded-full' : 'rounded'
+                  }`}
                 />
-                <span className="text-xs text-foreground group-hover:text-primary transition-colors">
+                <span className={`text-xs transition-colors ${
+                  option.id === 'all' 
+                    ? 'font-semibold text-primary' 
+                    : 'text-foreground group-hover:text-primary'
+                }`}>
                   {option.label}
                 </span>
               </label>
