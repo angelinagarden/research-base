@@ -6,205 +6,144 @@ interface FilterOption {
 }
 
 const Sidebar = () => {
-  const [selectedDomain, setSelectedDomain] = useState<string[]>(['all']);
-  const [selectedFocus, setSelectedFocus] = useState<string[]>(['all']);
-  const [selectedLevel, setSelectedLevel] = useState<string[]>(['all']);
-  const [selectedDex, setSelectedDex] = useState<string[]>(['all']);
+  const [themes, setThemes] = useState<string[]>(['all']);
+  const [types, setTypes] = useState<string[]>(['all']);
+  const [sources, setSources] = useState<string[]>(['all']);
+  // removed: access, insights
+  const [tags, setTags] = useState<string[]>([]);
 
-  const domainOptions: FilterOption[] = [
+  const themeOptions: FilterOption[] = [
     { id: 'all', label: 'All' },
-    { id: 'ai', label: 'AI & Machine Learning' },
-    { id: 'biotech', label: 'Biotechnology' },
-    { id: 'quantum', label: 'Quantum Computing' },
-    { id: 'neuroscience', label: 'Neuroscience' }
+    { id: 'ai_data', label: 'AI & Data' },
+    { id: 'climate', label: 'Climate & Sustainability' },
+    { id: 'health', label: 'Health & Medicine' },
+    { id: 'economics', label: 'Economics & Policy' },
+    { id: 'society', label: 'Society & Inequality' },
+    { id: 'education', label: 'Education & Knowledge Systems' }
   ];
 
-  const focusOptions: FilterOption[] = [
+  const typeOptions: FilterOption[] = [
     { id: 'all', label: 'All' },
-    { id: 'theoretical', label: 'Theoretical' },
-    { id: 'applied', label: 'Applied' },
-    { id: 'experimental', label: 'Experimental' }
+    { id: 'academic', label: 'Академические статьи' },
+    { id: 'industry_reports', label: 'Отчёты (WEF, McKinsey, EY, Deloitte…)' },
+    { id: 'gov_ngo', label: 'Гос./NGO публикации (WHO, UN, OECD…)}' },
+    { id: 'preprints', label: 'Препринты (arXiv, bioRxiv…)' },
+    { id: 'reviews', label: 'Обзоры / Метастадии' }
   ];
 
-  const levelOptions: FilterOption[] = [
+  const sourceOptions: FilterOption[] = [
     { id: 'all', label: 'All' },
-    { id: 'basic', label: 'Basic Research' },
-    { id: 'advanced', label: 'Advanced Research' },
-    { id: 'cutting-edge', label: 'Cutting-edge' }
+    { id: 'scientific', label: 'Научные базы (PubMed, arXiv…)' },
+    { id: 'industry', label: 'Консалтинг / Индустрия' },
+    { id: 'intl_orgs', label: 'Международные организации' },
+    { id: 'think_tanks', label: 'Think Tanks / RAND / Policy Labs' }
   ];
 
-  const dexOptions: FilterOption[] = [
-    { id: 'all', label: 'All' },
-    { id: 'high', label: 'High Impact' },
-    { id: 'medium', label: 'Medium Impact' },
-    { id: 'emerging', label: 'Emerging' }
-  ];
+  const tagOptions: string[] = ['future','science','society','ai','health','technology'];
 
-  const handleFilterChange = (filterType: string, optionId: string, isChecked: boolean) => {
+  const handleChange = (
+    kind: 'themes' | 'types' | 'sources',
+    optionId: string,
+    isChecked: boolean
+  ) => {
+    const setMap = {
+      themes: setThemes,
+      types: setTypes,
+      sources: setSources,
+      // access removed
+      // insights removed
+    } as const;
+    const getSelection = {
+      themes,
+      types,
+      sources,
+      // access removed
+      // insights removed
+    } as const;
+
     if (optionId === 'all') {
-      if (isChecked) {
-        // Если выбрали "All", убираем все остальные
-        switch (filterType) {
-          case 'domain':
-            setSelectedDomain(['all']);
-            break;
-          case 'focus':
-            setSelectedFocus(['all']);
-            break;
-          case 'level':
-            setSelectedLevel(['all']);
-            break;
-          case 'dex':
-            setSelectedDex(['all']);
-            break;
-        }
-      }
-    } else {
-      // Если выбрали конкретный фильтр
-      switch (filterType) {
-        case 'domain':
-          if (isChecked) {
-            setSelectedDomain(prev => [...prev.filter(id => id !== 'all'), optionId]);
-          } else {
-            const newSelection = selectedDomain.filter(id => id !== optionId);
-            setSelectedDomain(newSelection.length > 0 ? newSelection : ['all']);
-          }
-          break;
-        case 'focus':
-          if (isChecked) {
-            setSelectedFocus(prev => [...prev.filter(id => id !== 'all'), optionId]);
-          } else {
-            const newSelection = selectedFocus.filter(id => id !== optionId);
-            setSelectedFocus(newSelection.length > 0 ? newSelection : ['all']);
-          }
-          break;
-        case 'level':
-          if (isChecked) {
-            setSelectedLevel(prev => [...prev.filter(id => id !== 'all'), optionId]);
-          } else {
-            const newSelection = selectedLevel.filter(id => id !== optionId);
-            setSelectedLevel(newSelection.length > 0 ? newSelection : ['all']);
-          }
-          break;
-        case 'dex':
-          if (isChecked) {
-            setSelectedDex(prev => [...prev.filter(id => id !== 'all'), optionId]);
-          } else {
-            const newSelection = selectedDex.filter(id => id !== optionId);
-            setSelectedDex(newSelection.length > 0 ? newSelection : ['all']);
-          }
-          break;
-      }
+      if (isChecked) setMap[kind](['all']);
+      return;
     }
+    const current = getSelection[kind];
+    if (isChecked) setMap[kind]([...(current.filter(id => id !== 'all')), optionId]);
+    else {
+      const next = current.filter(id => id !== optionId);
+      setMap[kind](next.length ? next : ['all']);
+    }
+  };
+
+  const toggleTag = (tag: string) => {
+    setTags(prev => (prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]));
   };
 
   return (
     <aside className="w-72 border-r border-border p-6 font-mono">
       <div className="space-y-6">
         <div>
-          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">DOMAIN</h3>
+          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">ТЕМЫ</h3>
           <div className="space-y-1">
-            {domainOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
+            {themeOptions.map((o) => (
+              <label key={o.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
                   type="checkbox"
-                  name="domain"
-                  value={option.id}
-                  checked={selectedDomain.includes(option.id)}
-                  onChange={(e) => handleFilterChange('domain', option.id, e.target.checked)}
-                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
-                    option.id === 'all' ? 'rounded-full' : 'rounded'
-                  }`}
+                  checked={themes.includes(o.id)}
+                  onChange={(e) => handleChange('themes', o.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${o.id === 'all' ? 'rounded-full' : 'rounded'}`}
                 />
-                <span className={`text-xs transition-colors ${
-                  option.id === 'all' 
-                    ? 'font-semibold text-primary' 
-                    : 'text-foreground group-hover:text-primary'
-                }`}>
-                  {option.label}
-                </span>
+                <span className={`text-xs ${o.id === 'all' ? 'font-semibold text-primary' : 'text-foreground group-hover:text-primary'}`}>{o.label}</span>
               </label>
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">FOCUS</h3>
+          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">ТИПЫ ИССЛЕДОВАНИЙ</h3>
           <div className="space-y-1">
-            {focusOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
+            {typeOptions.map((o) => (
+              <label key={o.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
                   type="checkbox"
-                  name="focus"
-                  value={option.id}
-                  checked={selectedFocus.includes(option.id)}
-                  onChange={(e) => handleFilterChange('focus', option.id, e.target.checked)}
-                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
-                    option.id === 'all' ? 'rounded-full' : 'rounded'
-                  }`}
+                  checked={types.includes(o.id)}
+                  onChange={(e) => handleChange('types', o.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${o.id === 'all' ? 'rounded-full' : 'rounded'}`}
                 />
-                <span className={`text-xs transition-colors ${
-                  option.id === 'all' 
-                    ? 'font-semibold text-primary' 
-                    : 'text-foreground group-hover:text-primary'
-                }`}>
-                  {option.label}
-                </span>
+                <span className={`text-xs ${o.id === 'all' ? 'font-semibold text-primary' : 'text-foreground group-hover:text-primary'}`}>{o.label}</span>
               </label>
             ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">LEVEL</h3>
+          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">ИСТОЧНИК ДАННЫХ</h3>
           <div className="space-y-1">
-            {levelOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
+            {sourceOptions.map((o) => (
+              <label key={o.id} className="flex items-center space-x-1.5 cursor-pointer group">
                 <input
                   type="checkbox"
-                  name="level"
-                  value={option.id}
-                  checked={selectedLevel.includes(option.id)}
-                  onChange={(e) => handleFilterChange('level', option.id, e.target.checked)}
-                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
-                    option.id === 'all' ? 'rounded-full' : 'rounded'
-                  }`}
+                  checked={sources.includes(o.id)}
+                  onChange={(e) => handleChange('sources', o.id, e.target.checked)}
+                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${o.id === 'all' ? 'rounded-full' : 'rounded'}`}
                 />
-                <span className={`text-xs transition-colors ${
-                  option.id === 'all' 
-                    ? 'font-semibold text-primary' 
-                    : 'text-foreground group-hover:text-primary'
-                }`}>
-                  {option.label}
-                </span>
+                <span className={`text-xs ${o.id === 'all' ? 'font-semibold text-primary' : 'text-foreground group-hover:text-primary'}`}>{o.label}</span>
               </label>
             ))}
           </div>
         </div>
 
+        
+
         <div>
-          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">DEX</h3>
-          <div className="space-y-1">
-            {dexOptions.map((option) => (
-              <label key={option.id} className="flex items-center space-x-1.5 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  name="dex"
-                  value={option.id}
-                  checked={selectedDex.includes(option.id)}
-                  onChange={(e) => handleFilterChange('dex', option.id, e.target.checked)}
-                  className={`w-2 h-2 text-primary bg-background border border-border focus:ring-0 focus:ring-offset-0 ${
-                    option.id === 'all' ? 'rounded-full' : 'rounded'
-                  }`}
-                />
-                <span className={`text-xs transition-colors ${
-                  option.id === 'all' 
-                    ? 'font-semibold text-primary' 
-                    : 'text-foreground group-hover:text-primary'
-                }`}>
-                  {option.label}
-                </span>
-              </label>
+          <h3 className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">ТЕГИ</h3>
+          <div className="flex flex-wrap gap-2">
+            {tagOptions.map((t) => (
+              <button
+                key={t}
+                onClick={() => toggleTag(t)}
+                className={`px-2 py-1 border text-xs rounded-full ${tags.includes(t) ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-foreground border-border'}`}
+              >
+                #{t}
+              </button>
             ))}
           </div>
         </div>
