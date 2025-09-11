@@ -8,12 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "import:md": "tsx scripts/import-md-to-json.ts",
-    "update:who": "tsx scripts/update-who-record.ts",
-    "update:who:content": "tsx scripts/update-who-content.ts",
-    "update:editorial": "tsx scripts/update-editorial-ctgi.ts",
-    "update:sdbench": "tsx scripts/update-sdbench.ts"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -57,15 +52,12 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.61.1",
-    "react-markdown": "^9.1.0",
     "react-resizable-panels": "^2.1.9",
     "react-router-dom": "^6.30.1",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "tsx": "^4.20.5",
-    "uuid": "^13.0.0",
     "vaul": "^0.9.9",
     "zod": "^3.25.76"
   },
@@ -75,7 +67,6 @@
     "@types/node": "^22.16.5",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
-    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.32.0",
