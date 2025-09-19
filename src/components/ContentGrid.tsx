@@ -64,35 +64,66 @@ const ContentGrid = () => {
   const { data: notionData, loading: notionLoading, error: notionError } = useNotionData();
 
   // Функция для преобразования данных Notion в формат ResearchItem
-  const convertNotionToResearchItem = (notionItem: NotionResearchItem): ResearchItem => {
+  const convertNotionToResearchItem = (notionItem: any): ResearchItem => {
+    // Извлекаем данные из полей Notion
+    const title = notionItem.TitleOriginal?.title?.[0]?.text?.content || 
+                  notionItem.TitleShort?.rich_text?.[0]?.text?.content || 
+                  'Без названия';
+    
+    const authors = notionItem.Authors?.rich_text?.[0]?.text?.content || 
+                   notionItem.Organization?.rich_text?.[0]?.text?.content || 
+                   'Не указано';
+    
+    const summary = notionItem.CentralInsight?.rich_text?.[0]?.text?.content || 
+                   notionItem.Rationale?.rich_text?.[0]?.text?.content || 
+                   'Описание недоступно';
+    
+    const detailedContent = notionItem.DetailedContent?.rich_text?.[0]?.text?.content || 
+                           notionItem.RawMarkdown?.rich_text?.[0]?.text?.content || 
+                           '';
+    
+    const url = notionItem.URL?.url || '';
+    
+    const publishedDate = notionItem.DatePublished?.date?.start || null;
+    
+    const tags = notionItem.Tags?.multi_select?.map((tag: any) => tag.name) || [];
+    
+    const pubType = notionItem.PubType?.multi_select?.[0]?.name || 'report';
+    
     return {
       id: notionItem.id,
-      title: notionItem.title || 'Без названия',
-      institution: 'Notion Database',
-      summary: 'Исследование из базы данных Notion',
-      domain: ['Notion'],
-      focus: ['Applied'],
-      timeAgo: 'недавно',
-      publishedAt: null,
-      publicationType: 'report',
+      title: title,
+      institution: authors,
+      summary: summary,
+      domain: tags.length > 0 ? tags : ['Notion'],
+      focus: ['Applied'], // Можно добавить логику для определения фокуса
+      timeAgo: publishedDate ? new Date(publishedDate).toLocaleDateString('ru-RU') : 'недавно',
+      publishedAt: publishedDate,
+      publicationType: pubType.toLowerCase() as any,
       source: {
-        titleOriginal: notionItem.title || 'Без названия',
-        authorsOrOrg: 'Notion Database',
-        year: new Date().getFullYear(),
-        doiOrHandle: null,
-        url: '',
+        titleOriginal: title,
+        authorsOrOrg: authors,
+        year: publishedDate ? new Date(publishedDate).getFullYear() : new Date().getFullYear(),
+        doiOrHandle: notionItem.DOI?.rich_text?.[0]?.text?.content || null,
+        url: url,
         pdfUrl: null,
         language: null,
         license: null,
-        pages: null
+        pages: notionItem.VolumePages?.rich_text?.[0]?.text?.content || null
       },
       body: {
-        lede: 'Данные из Notion',
-        analysis: 'Подробная информация будет добавлена позже',
-        keyFindings: ['Данные загружены из Notion'],
-        limitations: [],
-        applications: [],
-        impactHorizon: null
+        lede: summary,
+        analysis: detailedContent,
+        keyFindings: notionItem.Quote?.rich_text?.[0]?.text?.content ? 
+                     [notionItem.Quote.rich_text[0].text.content] : 
+                     ['Ключевые выводы не указаны'],
+        limitations: notionItem.RisksLimitations?.rich_text?.[0]?.text?.content ? 
+                     [notionItem.RisksLimitations.rich_text[0].text.content] : 
+                     [],
+        applications: notionItem.PotentialApplication?.rich_text?.[0]?.text?.content ? 
+                      [notionItem.PotentialApplication.rich_text[0].text.content] : 
+                      [],
+        impactHorizon: notionItem.ImpactForecast?.['rich_text']?.[0]?.text?.content || null
       },
       metadata: {
         methods: [],
@@ -100,20 +131,21 @@ const ContentGrid = () => {
         geography: [],
         sectors: [],
         personas: [],
-        keywords: []
+        keywords: tags
       },
       visual: {
         coverImage: null,
         alt: null
       },
-      links: [],
-      citationAPA: 'Notion Database',
-      tags: ['notion'],
+      links: url ? [{ title: 'Источник', url: url }] : [],
+      citationAPA: notionItem.ReferencesAPA?.rich_text?.[0]?.text?.content || 
+                   `${authors} (${publishedDate ? new Date(publishedDate).getFullYear() : new Date().getFullYear()}). ${title}`,
+      tags: tags,
       rating: {
-        evidenceStrength: 1,
-        actionability: 1
+        evidenceStrength: 3, // Средняя оценка по умолчанию
+        actionability: 3
       },
-      notes: null
+      notes: notionItem.QuestionsLenses?.rich_text?.[0]?.text?.content || null
     };
   };
 

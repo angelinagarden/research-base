@@ -41,7 +41,9 @@ class NotionService {
 
       return data.results.map((page: any) => ({
         id: page.id,
-        title: page.properties.title?.title?.[0]?.text?.content || 'Без названия',
+        title: page.properties.TitleOriginal?.title?.[0]?.text?.content || 
+               page.properties.TitleShort?.rich_text?.[0]?.text?.content || 
+               'Без названия',
         // Добавляем другие поля по мере необходимости
         ...page.properties,
       }));
