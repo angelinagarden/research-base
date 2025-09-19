@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './ui/modal';
 import ResearchDetail from './ResearchDetail';
-import DataSourceToggle from './DataSourceToggle';
+// DataSourceToggle удален - используем только Notion
 import { useNotionData } from '../hooks/useNotionData';
 import { NotionResearchItem } from '../config/notion';
 
@@ -58,7 +58,7 @@ interface ResearchItem {
 
 const ContentGrid = () => {
   const [openCardId, setOpenCardId] = useState<string | null>(null);
-  const [useNotion, setUseNotion] = useState(false);
+  // Всегда используем Notion - переключатель удален
   
   // Хук для работы с Notion
   const { data: notionData, loading: notionLoading, error: notionError } = useNotionData();
@@ -565,30 +565,21 @@ const ContentGrid = () => {
     setOpenCardId(null);
   };
 
-  // Выбираем источник данных
-  const currentData = useNotion 
-    ? notionData.map(convertNotionToResearchItem) 
-    : researchItems;
-  const isLoading = useNotion ? notionLoading : false;
-  const error = useNotion ? notionError : null;
+  // Используем только данные из Notion
+  const currentData = notionData.map(convertNotionToResearchItem);
+  const isLoading = notionLoading;
+  const error = notionError;
 
   const selectedResearch = currentData.find(item => item.id === openCardId);
 
   return (
     <main className="flex-1 p-6">
-      {/* Переключатель источника данных */}
-      <div className="mb-6">
-        <DataSourceToggle 
-          useNotion={useNotion}
-          onToggle={setUseNotion}
-          loading={isLoading}
-        />
-        {error && (
-          <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-            Ошибка загрузки из Notion: {error}
-          </div>
-        )}
-      </div>
+      {/* Источник данных: только Notion */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          Ошибка загрузки из Notion: {error}
+        </div>
+      )}
 
       {/* Индикатор загрузки */}
       {isLoading && (
