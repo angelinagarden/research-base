@@ -25,17 +25,12 @@ class NotionService {
   // Получить все исследования
   async getAllResearchItems(): Promise<NotionResearchItem[]> {
     try {
-      // Используем прямой HTTP запрос, так как databases.query не существует в версии 5.0.0
-      const response = await fetch(`https://api.notion.com/v1/databases/${this.databaseId}/query`, {
+      // Используем прокси-сервер для обхода CORS
+      const response = await fetch('http://localhost:3001/api/notion/query', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_NOTION_API_TOKEN}`,
           'Content-Type': 'application/json',
-          'Notion-Version': '2022-06-28',
         },
-        body: JSON.stringify({
-          page_size: 100,
-        }),
       });
 
       if (!response.ok) {
