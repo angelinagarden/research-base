@@ -25,12 +25,26 @@ class NotionService {
   // Получить все исследования
   async getAllResearchItems(): Promise<NotionResearchItem[]> {
     try {
-      const response = await this.client.databases.query({
-        database_id: this.databaseId,
-        page_size: 100,
+      // Используем прямой HTTP запрос, так как databases.query не существует в версии 5.0.0
+      const response = await fetch(`https://api.notion.com/v1/databases/${this.databaseId}/query`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_NOTION_API_TOKEN}`,
+          'Content-Type': 'application/json',
+          'Notion-Version': '2022-06-28',
+        },
+        body: JSON.stringify({
+          page_size: 100,
+        }),
       });
 
-      return response.results.map((page: any) => ({
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data.results.map((page: any) => ({
         id: page.id,
         title: page.properties.title?.title?.[0]?.text?.content || 'Без названия',
         // Добавляем другие поля по мере необходимости
@@ -38,6 +52,7 @@ class NotionService {
       }));
     } catch (error) {
       console.error('Error fetching from Notion:', error);
+      console.error('Error details:', error);
       throw error;
     }
   }
