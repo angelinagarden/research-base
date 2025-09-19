@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Modal from './ui/modal';
 import ResearchDetail from './ResearchDetail';
+import DataSourceToggle from './DataSourceToggle';
+import { useNotionData } from '../hooks/useNotionData';
+import { NotionResearchItem } from '../config/notion';
 
 interface ResearchItem {
   id: string;
@@ -55,6 +58,64 @@ interface ResearchItem {
 
 const ContentGrid = () => {
   const [openCardId, setOpenCardId] = useState<string | null>(null);
+  const [useNotion, setUseNotion] = useState(false);
+  
+  // Хук для работы с Notion
+  const { data: notionData, loading: notionLoading, error: notionError } = useNotionData();
+
+  // Функция для преобразования данных Notion в формат ResearchItem
+  const convertNotionToResearchItem = (notionItem: NotionResearchItem): ResearchItem => {
+    return {
+      id: notionItem.id,
+      title: notionItem.title || 'Без названия',
+      institution: 'Notion Database',
+      summary: 'Исследование из базы данных Notion',
+      domain: ['Notion'],
+      focus: ['Applied'],
+      timeAgo: 'недавно',
+      publishedAt: null,
+      publicationType: 'report',
+      source: {
+        titleOriginal: notionItem.title || 'Без названия',
+        authorsOrOrg: 'Notion Database',
+        year: new Date().getFullYear(),
+        doiOrHandle: null,
+        url: '',
+        pdfUrl: null,
+        language: null,
+        license: null,
+        pages: null
+      },
+      body: {
+        lede: 'Данные из Notion',
+        analysis: 'Подробная информация будет добавлена позже',
+        keyFindings: ['Данные загружены из Notion'],
+        limitations: [],
+        applications: [],
+        impactHorizon: null
+      },
+      metadata: {
+        methods: [],
+        metrics: [],
+        geography: [],
+        sectors: [],
+        personas: [],
+        keywords: []
+      },
+      visual: {
+        coverImage: null,
+        alt: null
+      },
+      links: [],
+      citationAPA: 'Notion Database',
+      tags: ['notion'],
+      rating: {
+        evidenceStrength: 1,
+        actionability: 1
+      },
+      notes: null
+    };
+  };
 
   const researchItems: ResearchItem[] = [
     {
@@ -472,12 +533,42 @@ const ContentGrid = () => {
     setOpenCardId(null);
   };
 
-  const selectedResearch = researchItems.find(item => item.id === openCardId);
+  // Выбираем источник данных
+  const currentData = useNotion 
+    ? notionData.map(convertNotionToResearchItem) 
+    : researchItems;
+  const isLoading = useNotion ? notionLoading : false;
+  const error = useNotion ? notionError : null;
+
+  const selectedResearch = currentData.find(item => item.id === openCardId);
 
   return (
     <main className="flex-1 p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {researchItems.map((item, index) => (
+      {/* Переключатель источника данных */}
+      <div className="mb-6">
+        <DataSourceToggle 
+          useNotion={useNotion}
+          onToggle={setUseNotion}
+          loading={isLoading}
+        />
+        {error && (
+          <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+            Ошибка загрузки из Notion: {error}
+          </div>
+        )}
+      </div>
+
+      {/* Индикатор загрузки */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="text-muted-foreground">Загрузка данных из Notion...</div>
+        </div>
+      )}
+
+      {/* Сетка исследований */}
+      {!isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentData.map((item, index) => (
           <div 
             key={item.id} 
             className="border border-grid-border bg-card hover:bg-hover-subtle transition-colors cursor-pointer group"
@@ -505,7 +596,8 @@ const ContentGrid = () => {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Modal for research details */}
       <Modal 
