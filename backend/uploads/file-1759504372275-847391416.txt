@@ -1,0 +1,6 @@
+Research Paper Title: AI in Healthcare
+Authors: Dr. Sarah Johnson, Prof. Michael Chen
+Abstract: This paper explores the applications of artificial intelligence in healthcare systems.
+Keywords: AI, healthcare, machine learning, medical diagnosis
+Institution: Stanford University
+DOI: 10.1000/test123

@@ -1,0 +1,25 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - echo "Backend build started"
+        - cd backend
+        - npm install
+        - npm run build
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Frontend build started"
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

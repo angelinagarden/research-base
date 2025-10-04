@@ -1,0 +1,3 @@
+{
+    "integration.response.header.Access-Control-Allow-Origin": "'*'"
+}

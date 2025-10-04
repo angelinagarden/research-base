@@ -1,0 +1,10 @@
+{
+  "name": "research-base-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function for research base processing",
+  "main": "index.js",
+  "dependencies": {
+    "@notionhq/client": "^5.1.0",
+    "aws-sdk": "^2.1692.0"
+  }
+}

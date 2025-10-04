@@ -1,0 +1,7 @@
+{
+  "httpMethod": "OPTIONS",
+  "resource": "/upload",
+  "headers": {
+    "Origin": "test"
+  }
+}

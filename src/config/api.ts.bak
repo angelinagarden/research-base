@@ -1,0 +1,31 @@
+// API Configuration
+const isProduction = import.meta.env.PROD;
+const isDevelopment = import.meta.env.DEV;
+
+// Backend URL configuration
+export const API_BASE_URL = isProduction 
+  ? 'https://your-api-gateway-url.amazonaws.com/prod' // AWS API Gateway - UPDATE THIS
+  : 'http://localhost:3001';
+
+// For AWS deployment, we need to point to a backend service
+// Options:
+// 1. Deploy backend to AWS Lambda + API Gateway
+// 2. Deploy backend to AWS EC2
+// 3. Use AWS App Runner
+// 4. Use AWS ECS/Fargate
+
+// For now, let's use a placeholder that will need to be updated
+export const API_ENDPOINTS = {
+  UPLOAD: `${API_BASE_URL}/api/aws/upload`,
+  PROCESS: (fileId: string) => `${API_BASE_URL}/api/aws/process/${fileId}`,
+  STATUS: (fileId: string) => `${API_BASE_URL}/api/aws/status/${fileId}`,
+  NOTION_TEST: `${API_BASE_URL}/api/notion/test`,
+  HEALTH: `${API_BASE_URL}/health`,
+} as const;
+
+export const config = {
+  API_BASE_URL,
+  API_ENDPOINTS,
+  isProduction,
+  isDevelopment,
+} as const;

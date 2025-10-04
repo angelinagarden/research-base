@@ -1,0 +1,40 @@
+{
+  "frontend": {
+    "bucket": "research-base-frontend",
+    "region": "us-east-1",
+    "cloudfront": {
+      "enabled": true,
+      "comment": "Research Base Frontend CDN",
+      "priceClass": "PriceClass_100",
+      "defaultRootObject": "index.html",
+      "customErrorResponses": [
+        {
+          "errorCode": 404,
+          "responsePagePath": "/index.html",
+          "responseCode": "200",
+          "errorCachingMinTTL": 300
+        },
+        {
+          "errorCode": 403,
+          "responsePagePath": "/index.html", 
+          "responseCode": "200",
+          "errorCachingMinTTL": 300
+        }
+      ]
+    }
+  },
+  "backend": {
+    "bucket": "research-base-angelina",
+    "region": "us-east-1",
+    "api": {
+      "baseUrl": "http://localhost:3001/api"
+    }
+  },
+  "deployment": {
+    "environment": "production",
+    "autoDeploy": false,
+    "buildCommand": "npm run build",
+    "deployCommand": "aws s3 sync dist/ s3://{bucket} --delete"
+  }
+}
+

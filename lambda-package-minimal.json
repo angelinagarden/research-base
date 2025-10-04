@@ -1,0 +1,11 @@
+{
+  "name": "lambda-function",
+  "version": "1.0.0",
+  "description": "Lambda function for research processing",
+  "main": "index.js",
+  "type": "commonjs",
+  "dependencies": {
+    "@notionhq/client": "^5.1.0",
+    "aws-sdk": "^2.1692.0"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "title_original": "Sample Report Title",
+    "title_short": "Sample Report",
+    "authors_org": "Sample Institute",
+    "pub_type": "report",
+    "date_published": "2025-01-15",
+    "identifiers": {
+      "isbn": null,
+      "doi": null,
+      "url": "https://example.com/sample-report"
+    },
+    "volume_pages": "Vol. 1, pp. 1-20",
+    "rationale": "Selected because it defines a baseline methodology.",
+    "central_insight": "Key insight in 1–3 sentences.",
+    "detailed_content": {
+      "chapter_1": "Summary of chapter 1",
+      "chapter_2": "Summary of chapter 2"
+    },
+    "potential_application": "Product ideas and policy suggestions.",
+    "impact_forecast": "Expected impact in 2–5 years.",
+    "risks_limitations": "Known limitations and risks.",
+    "quote": "A concise quote goes here.",
+    "questions_lenses": [
+      "What problem does it solve?",
+      "What is the evidence strength?"
+    ],
+    "references_apa": "Author. (2025). Sample Report Title.",
+    "tags": ["ai","health","policy"],
+    "created_at": "2025-01-15T12:00:00Z",
+    "updated_at": "2025-01-16T12:00:00Z"
+  }
+]
+
+
+

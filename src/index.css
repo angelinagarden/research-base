@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Digital Garden Light Theme */
+    --background: 60 9% 98%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 0 0% 0%;
+    --primary-foreground: 60 9% 98%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 20%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 94%;
+    --accent-foreground: 0 0% 15%;
+
+    --destructive: 0 60% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --ring: 0 0% 20%;
+
+    --radius: 0rem;
+
+    /* Typography */
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* Custom navigation colors */
+    --nav-active: 0 0% 0%;
+    --nav-inactive: 0 0% 45%;
+    --nav-separator: 0 0% 70%;
+
+    /* Hover states */
+    --hover-subtle: 0 0% 94%;
+    --hover-accent: 0 0% 90%;
+
+    /* Content grid */
+    --grid-border: 0 0% 85%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
